@@ -1,0 +1,1567 @@
+@prefix map: <#> .
+@prefix db: <> .
+#@prefix vocab: <vocab/> .
+@prefix vocab: <http://www.boinq.org/homo_sapiens_core_71_37#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix d2rq: <http://www.wiwiss.fu-berlin.de/suhl/bizer/D2RQ/0.1#> .
+@prefix jdbc: <http://d2rq.org/terms/jdbc/> .
+@prefix faldo: <http://biohackathon.org/resource/faldo#> .
+@prefix boinq: <http://www.boinq.org/datasource#> .
+
+# This is a subset of ensembl core, exposed as faldo
+# This work is under progress
+
+map:database a d2rq:Database;
+	d2rq:jdbcDriver "com.mysql.jdbc.Driver";
+#	TODO: change your jdbc url and add user/pass
+#	d2rq:jdbcDSN "jdbc:mysql://localhost/homo_sapiens_core_71_37";
+#	d2rq:username "USER";
+#	d2rq:password "PASS";
+	jdbc:autoReconnect "true";
+	jdbc:zeroDateTimeBehavior "convertToNull";
+	.
+map:Configuration a d2rq:Configuration;
+    d2rq:useAllOptimizations true
+    .
+
+# Table attrib_type
+map:attrib_type a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "attrib_type/@@attrib_type.attrib_type_id@@";
+	d2rq:class vocab:attrib_type;
+	d2rq:classDefinitionLabel "attrib_type";
+	.
+map:attrib_type__label a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:attrib_type;
+	d2rq:property rdfs:label;
+	d2rq:pattern "@@attrib_type.name@@";
+	.
+map:attrib_type_attrib_type_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:attrib_type;
+	d2rq:property vocab:attrib_type_id;
+	d2rq:propertyDefinitionLabel "attrib_type attrib_type_id";
+	d2rq:column "attrib_type.attrib_type_id";
+	d2rq:datatype xsd:integer;
+	.
+map:attrib_type_code a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:attrib_type;
+	d2rq:property vocab:code;
+	d2rq:propertyDefinitionLabel "attrib_type code";
+	d2rq:column "attrib_type.code";
+	.
+map:attrib_type_name a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:attrib_type;
+	d2rq:property vocab:name;
+	d2rq:propertyDefinitionLabel "attrib_type name";
+	d2rq:column "attrib_type.name";
+	.
+map:attrib_type_description a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:attrib_type;
+	d2rq:property vocab:description;
+	d2rq:propertyDefinitionLabel "attrib_type description";
+	d2rq:column "attrib_type.description";
+	.
+
+# Table coord_system
+map:coord_system a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "coord_system/@@coord_system.coord_system_id@@";
+	d2rq:class vocab:coord_system;
+	d2rq:classDefinitionLabel "coord_system";
+	.
+map:coord_system__label a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:coord_system;
+	d2rq:property rdfs:label;
+	d2rq:pattern "@@coord_system.name@@";
+	.
+map:coord_system_coord_system_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:coord_system;
+	d2rq:property vocab:coord_system_id;
+	d2rq:propertyDefinitionLabel "coord_system coord_system_id";
+	d2rq:column "coord_system.coord_system_id";
+	d2rq:datatype xsd:integer;
+	.
+map:coord_system_species_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:coord_system;
+	d2rq:property vocab:species_id;
+	d2rq:propertyDefinitionLabel "coord_system species_id";
+	d2rq:column "coord_system.species_id";
+	d2rq:datatype xsd:integer;
+	.
+map:coord_system_name a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:coord_system;
+	d2rq:property vocab:name;
+	d2rq:propertyDefinitionLabel "coord_system name";
+	d2rq:column "coord_system.name";
+	.
+map:coord_system_version a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:coord_system;
+	d2rq:property vocab:version;
+	d2rq:propertyDefinitionLabel "coord_system version";
+	d2rq:column "coord_system.version";
+	.
+map:coord_system_rank a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:coord_system;
+	d2rq:property vocab:rank;
+	d2rq:propertyDefinitionLabel "coord_system rank";
+	d2rq:column "coord_system.rank";
+	d2rq:datatype xsd:integer;
+	.
+map:coord_system_attrib a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:coord_system;
+	d2rq:property vocab:attrib;
+	d2rq:propertyDefinitionLabel "coord_system attrib";
+	d2rq:column "coord_system.attrib";
+	.
+
+# Table exon
+map:exon a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	# must use an indexed value as an id because this value is used often in joins
+	# even in queries within same table - TODO: patch d2rq for reducing self joins
+	d2rq:uriPattern "exon/@@exon.exon_id@@";
+	d2rq:class vocab:exon;
+	d2rq:classDefinitionLabel "exon";
+	.
+map:exon__label a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:exon;
+	d2rq:property rdfs:label;
+	d2rq:pattern "@@exon.stable_id@@";
+	.
+map:exon_exon_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:exon;
+	d2rq:property vocab:exon_id;
+	d2rq:propertyDefinitionLabel "exon exon_id";
+	d2rq:column "exon.exon_id";
+	d2rq:datatype xsd:integer;
+	.
+map:exon_is_a_region a d2rq:PropertyBridge
+	; d2rq:property rdf:type
+	; d2rq:belongsToClassMap map:exon
+	; d2rq:uriPattern "http://biohackathon.org/resource/faldo#Region"
+	.
+map:exon_startPosition a d2rq:ClassMap
+	; d2rq:dataStorage map:database
+	; d2rq:uriPattern "position/exon_start_@@exon.exon_id@@"
+	#; d2rq:class faldo:StrandedPosition #redundant. class is assigned later
+	.
+map:exon_startPositionPositiveStrand a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:exon_startPosition
+	; d2rq:property rdf:type
+	; d2rq:uriPattern "http://biohackathon.org/resource/faldo#ForwardStrandPosition"
+	; d2rq:condition "exon.seq_region_strand = 1"
+	.
+map:exon_startPositionNegativeStrand a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:exon_startPosition
+	; d2rq:property rdf:type
+	; d2rq:uriPattern "http://biohackathon.org/resource/faldo#ReverseStrandPosition"
+	; d2rq:condition "exon.seq_region_strand = -1"
+	.
+map:exon_startPositionPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:exon_startPosition
+	; d2rq:property faldo:position
+	; d2rq:datatype xsd:long
+	; d2rq:column "exon.seq_region_start";
+	.
+map:exon_startPositionReference a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:exon_startPosition
+	; d2rq:property faldo:reference
+#	; d2rq:column "exon.seq_region_id"
+#	; d2rq:datatype xsd:integer
+	; d2rq:refersToClassMap map:seq_region
+	; d2rq:join "exon.seq_region_id => seq_region.seq_region_id"
+	.
+map:exon_to_startPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:exon
+	; d2rq:property faldo:begin
+	; d2rq:uriPattern "position/exon_start_@@exon.exon_id@@"
+	.
+map:exon_endPosition a d2rq:ClassMap
+	; d2rq:dataStorage map:database
+	; d2rq:uriPattern "position/exon_end_@@exon.exon_id@@"
+	; d2rq:class faldo:StrandedPosition
+	.
+map:exon_endPositionPositiveStrand a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:exon_endPosition
+	; d2rq:property rdf:type
+	; d2rq:uriPattern "faldo:ForwardStrandPosition"
+	; d2rq:condition "exon.seq_region_strand = 1"
+	.
+map:exon_endPositionNegativeStrand a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:exon_endPosition
+	; d2rq:property rdf:type
+	; d2rq:uriPattern "faldo:ReverseStrandPosition"
+	; d2rq:condition "exon.seq_region_strand = -1"
+	.
+map:exon_endPositionPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:exon_endPosition
+	; d2rq:property faldo:position
+	; d2rq:datatype xsd:long
+	; d2rq:column "exon.seq_region_end";
+	.
+map:exon_endPositionReference a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:exon_endPosition
+	; d2rq:property faldo:reference
+#	; d2rq:column "exon.seq_region_id"
+#	; d2rq:datatype xsd:integer
+	; d2rq:refersToClassMap map:seq_region
+	; d2rq:join "exon.seq_region_id => seq_region.seq_region_id"
+	.
+map:exon_to_endPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:exon
+	; d2rq:property faldo:end
+	; d2rq:uriPattern "position/exon_end_@@exon.exon_id@@"
+	.
+map:exon_phase a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:exon;
+	d2rq:property vocab:phase;
+	d2rq:propertyDefinitionLabel "exon phase";
+	d2rq:column "exon.phase";
+	d2rq:datatype xsd:integer;
+	.
+map:exon_end_phase a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:exon;
+	d2rq:property vocab:end_phase;
+	d2rq:propertyDefinitionLabel "exon end_phase";
+	d2rq:column "exon.end_phase";
+	d2rq:datatype xsd:integer;
+	.
+map:exon_is_current a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:exon;
+	d2rq:property vocab:is_current;
+	d2rq:propertyDefinitionLabel "exon is_current";
+	d2rq:column "exon.is_current";
+	d2rq:datatype xsd:boolean;
+	.
+map:exon_is_constitutive a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:exon;
+	d2rq:property vocab:is_constitutive;
+	d2rq:propertyDefinitionLabel "exon is_constitutive";
+	d2rq:column "exon.is_constitutive";
+	d2rq:datatype xsd:boolean;
+	.
+map:exon_stable_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:exon;
+	d2rq:property vocab:stable_id;
+	d2rq:propertyDefinitionLabel "exon stable_id";
+	d2rq:column "exon.stable_id";
+	.
+map:exon_version a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:exon;
+	d2rq:property vocab:version;
+	d2rq:propertyDefinitionLabel "exon version";
+	d2rq:column "exon.version";
+	d2rq:datatype xsd:integer;
+	.
+map:exon_created_date a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:exon;
+	d2rq:property vocab:created_date;
+	d2rq:propertyDefinitionLabel "exon created_date";
+	d2rq:column "exon.created_date";
+	d2rq:datatype xsd:dateTime;
+	.
+map:exon_modified_date a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:exon;
+	d2rq:property vocab:modified_date;
+	d2rq:propertyDefinitionLabel "exon modified_date";
+	d2rq:column "exon.modified_date";
+	d2rq:datatype xsd:dateTime;
+	.
+map:exon_transcripts a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:exon
+	; d2rq:property vocab:member_of_transcript
+	; d2rq:propertyDefinitionLabel "member of transcript"
+	; d2rq:refersToClassMap map:transcript
+	; d2rq:join "transcript.transcript_id <= exon_transcript.transcript_id"
+	; d2rq:join "exon.exon_id <= exon_transcript.exon_id"
+	.
+
+
+# Table external_db
+map:external_db a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "external_db/@@external_db.external_db_id@@";
+	d2rq:class vocab:external_db;
+	d2rq:classDefinitionLabel "external_db";
+	.
+map:external_db__label a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:external_db;
+	d2rq:property rdfs:label;
+	d2rq:pattern "external_db #@@external_db.db_name@@";
+	.
+map:external_db_external_db_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:external_db;
+	d2rq:property vocab:external_db_id;
+	d2rq:propertyDefinitionLabel "external_db external_db_id";
+	d2rq:column "external_db.external_db_id";
+	d2rq:datatype xsd:integer;
+	.
+map:external_db_db_name a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:external_db;
+	d2rq:property vocab:db_name;
+	d2rq:propertyDefinitionLabel "external_db db_name";
+	d2rq:column "external_db.db_name";
+	.
+map:external_db_db_release a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:external_db;
+	d2rq:property vocab:db_release;
+	d2rq:propertyDefinitionLabel "external_db db_release";
+	d2rq:column "external_db.db_release";
+	.
+map:external_db_status a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:external_db;
+	d2rq:property vocab:db_status;
+	d2rq:propertyDefinitionLabel "external_db status";
+	d2rq:column "external_db.status";
+	.
+map:external_db_priority a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:external_db;
+	d2rq:property vocab:priority;
+	d2rq:propertyDefinitionLabel "external_db priority";
+	d2rq:column "external_db.priority";
+	d2rq:datatype xsd:integer;
+	.
+map:external_db_db_display_name a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:external_db;
+	d2rq:property vocab:db_display_name;
+	d2rq:propertyDefinitionLabel "external_db db_display_name";
+	d2rq:column "external_db.db_display_name";
+	.
+map:external_db_type a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:external_db;
+	d2rq:property vocab:db_type;
+	d2rq:propertyDefinitionLabel "external_db type";
+	d2rq:column "external_db.type";
+	.
+map:external_db_secondary_db_name a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:external_db;
+	d2rq:property vocab:secondary_db_name;
+	d2rq:propertyDefinitionLabel "external_db secondary_db_name";
+	d2rq:column "external_db.secondary_db_name";
+	.
+map:external_db_secondary_db_table a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:external_db;
+	d2rq:property vocab:secondary_db_table;
+	d2rq:propertyDefinitionLabel "external_db secondary_db_table";
+	d2rq:column "external_db.secondary_db_table";
+	.
+map:external_db_description a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:external_db;
+	d2rq:property vocab:description;
+	d2rq:propertyDefinitionLabel "external_db description";
+	d2rq:column "external_db.description";
+	.
+
+# Table gene
+map:gene a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "gene/@@gene.gene_id@@";
+	d2rq:class vocab:gene;
+	d2rq:classDefinitionLabel "gene";
+	.
+map:gene__label a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property rdfs:label;
+	d2rq:pattern "@@gene.stable_id@@";
+	.
+map:gene_gene_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property vocab:gene_id;
+	d2rq:propertyDefinitionLabel "gene gene_id";
+	d2rq:column "gene.gene_id";
+	d2rq:datatype xsd:integer;
+	.
+map:gene_biotype a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property vocab:biotype;
+	d2rq:propertyDefinitionLabel "gene biotype";
+	d2rq:column "gene.biotype";
+	.
+map:gene_seq_region_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property vocab:has_seq_region;
+	d2rq:propertyDefinitionLabel "gene seq_region";
+	d2rq:refersToClassMap map:seq_region;
+	d2rq:join "gene.seq_region_id => seq_region.seq_region_id";
+	.
+map:gene_is_a_region a d2rq:PropertyBridge
+	; d2rq:property rdf:type
+	; d2rq:belongsToClassMap map:gene
+	; d2rq:uriPattern "http://biohackathon.org/resource/faldo#Region"
+	.
+map:gene_startPosition a d2rq:ClassMap
+	; d2rq:dataStorage map:database
+	; d2rq:uriPattern "position/gene_start_@@gene.gene_id@@"
+	#; d2rq:class faldo:StrandedPosition #redundant. class is assigned later
+	.
+map:gene_startPositionPositiveStrand a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:gene_startPosition
+	; d2rq:property rdf:type
+	; d2rq:uriPattern "http://biohackathon.org/resource/faldo#ForwardStrandPosition"
+	; d2rq:condition "gene.seq_region_strand = 1"
+	.
+map:gene_startPositionNegativeStrand a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:gene_startPosition
+	; d2rq:property rdf:type
+	; d2rq:uriPattern "http://biohackathon.org/resource/faldo#ReverseStrandPosition"
+	; d2rq:condition "gene.seq_region_strand = -1"
+	.
+map:gene_startPositionPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:gene_startPosition
+	; d2rq:property faldo:position
+	; d2rq:datatype xsd:long
+	; d2rq:column "gene.seq_region_start";
+	.
+map:gene_startPositionReference a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:gene_startPosition
+	; d2rq:property faldo:reference
+	; d2rq:refersToClassMap map:seq_region
+	; d2rq:join "gene.seq_region_id => seq_region.seq_region_id"
+	.
+map:gene_to_startPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:gene
+	; d2rq:property faldo:begin
+	; d2rq:uriPattern "position/gene_start_@@gene.gene_id@@"
+	.
+map:gene_endPosition a d2rq:ClassMap
+	; d2rq:dataStorage map:database
+	; d2rq:uriPattern "position/gene_end_@@gene.gene_id@@"
+	#; d2rq:class faldo:StrandedPosition #redundant. class is assigned later
+	.
+map:gene_endPositionPositiveStrand a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:gene_endPosition
+	; d2rq:property rdf:type
+	; d2rq:uriPattern "http://biohackathon.org/resource/faldo#ForwardStrandPosition"
+	; d2rq:condition "gene.seq_region_strand = 1"
+	.
+map:gene_endPositionNegativeStrand a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:gene_endPosition
+	; d2rq:property rdf:type
+	; d2rq:uriPattern "http://biohackathon.org/resource/faldo#ReverseStrandPosition"
+	; d2rq:condition "gene.seq_region_strand = -1"
+	.
+map:gene_endPositionPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:gene_startPosition
+	; d2rq:property faldo:position
+	; d2rq:datatype xsd:long
+	; d2rq:column "gene.seq_region_end";
+	.
+map:gene_endPositionReference a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:gene_endPosition
+	; d2rq:property faldo:reference
+	; d2rq:refersToClassMap map:seq_region
+	; d2rq:join "gene.seq_region_id => seq_region.seq_region_id"
+	.
+map:gene_to_endPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:gene
+	; d2rq:property faldo:end
+	; d2rq:uriPattern "position/gene_end_@@gene.gene_id@@"
+	.
+map:gene_display_xref a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property vocab:display_xref;
+	d2rq:propertyDefinitionLabel "gene display_xref";
+	#d2rq:column "gene.display_xref_id";
+	#d2rq:datatype xsd:integer;
+	d2rq:refersToClassMap map:xref;
+	d2rq:join "gene.display_xref_id => xref.xref_id";
+	.
+map:gene_source a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property vocab:source;
+	d2rq:propertyDefinitionLabel "gene source";
+	d2rq:column "gene.source";
+	.
+map:gene_status a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property vocab:status;
+	d2rq:propertyDefinitionLabel "gene status";
+	d2rq:column "gene.status";
+	.
+map:gene_description a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	#d2rq:property vocab:description;
+	d2rq:property rdfs:comment;
+	#d2rq:propertyDefinitionLabel "gene description";
+	d2rq:column "gene.description";
+	.
+map:gene_is_current a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property vocab:is_current;
+	d2rq:propertyDefinitionLabel "gene is_current";
+	d2rq:column "gene.is_current";
+	d2rq:datatype xsd:boolean;
+	.
+map:gene_canonical_transcript_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property vocab:canonical_transcript;
+	d2rq:propertyDefinitionLabel "gene canonical_transcript_id";
+	#d2rq:column "gene.canonical_transcript_id";
+	#d2rq:datatype xsd:integer;
+	d2rq:refersToClassMap map:transcript;
+	d2rq:join "gene.canonical_transcript_id => transcript.transcript_id";
+	.
+map:gene_canonical_annotation a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property rdfs:comment;
+	#d2rq:property vocab:gene_canonical_annotation;
+	#d2rq:propertyDefinitionLabel "gene canonical_annotation";
+	d2rq:column "gene.canonical_annotation";
+	.
+map:gene_stable_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property vocab:stable_id;
+	d2rq:propertyDefinitionLabel "gene stable_id";
+	d2rq:column "gene.stable_id";
+	.
+map:gene_version a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property vocab:version;
+	d2rq:propertyDefinitionLabel "gene version";
+	d2rq:column "gene.version";
+	d2rq:datatype xsd:integer;
+	.
+map:gene_created_date a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property vocab:created_date;
+	d2rq:propertyDefinitionLabel "gene created_date";
+	d2rq:column "gene.created_date";
+	d2rq:datatype xsd:dateTime;
+	.
+map:gene_modified_date a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property vocab:modified_date;
+	d2rq:propertyDefinitionLabel "gene modified_date";
+	d2rq:column "gene.modified_date";
+	d2rq:datatype xsd:dateTime;
+	.
+map:gene_xref a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:gene
+	; d2rq:refersToClassMap map:xref
+	; d2rq:property vocab:has_xref
+	; d2rq:join "object_xref.ensembl_id => gene.gene_id"
+	; d2rq:condition "object_xref.ensembl_object_type = 'Gene'"
+	.
+map:gene_transcripts a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:gene
+	; d2rq:property vocab:has_transcript
+	; d2rq:propertyDefinitionLabel "has transcripts"
+	; d2rq:refersToClassMap map:transcript
+	; d2rq:join "gene.gene_id <= transcript.gene_id"
+	.
+map:gene_annotation a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:gene
+	#; d2rq:property vocab:is_annotated_with_term
+	; d2rq:property boinq:externalGOTerm
+	; d2rq:join "transcript.gene_id => gene.gene_id"
+	; d2rq:join "translation.transcript_id => transcript.transcript_id"
+	; d2rq:join "object_xref.ensembl_id => translation.translation_id"
+	; d2rq:condition "object_xref.ensembl_object_type = 'Translation'"
+	; d2rq:join "object_xref.xref_id => xref.xref_id"
+	; d2rq:join "xref.external_db_id => external_db.external_db_id"
+	; d2rq:condition "external_db.db_name = 'GO'"
+	; d2rq:uriSqlExpression "concat('http://purl.obolibrary.org/obo/GO_',substring(xref.display_label from 4))"
+	.
+
+# Table ontology_xref
+map:ontology_xref a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	# Sorry, I don't know which columns to put into the uriPattern
+	#     for "ontology_xref" because the table doesn't have a primary key.
+	#     Please specify it manually.
+	d2rq:uriPattern "ontology_xref";
+	d2rq:class vocab:ontology_xref;
+	d2rq:classDefinitionLabel "ontology_xref";
+	.
+map:ontology_xref_object_xref_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:ontology_xref;
+	d2rq:property vocab:ontology_xref_object_xref_id;
+	d2rq:propertyDefinitionLabel "ontology_xref object_xref_id";
+	d2rq:column "ontology_xref.object_xref_id";
+	d2rq:datatype xsd:integer;
+	.
+map:ontology_xref_source_xref_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:ontology_xref;
+	d2rq:property vocab:ontology_xref_source_xref_id;
+	d2rq:propertyDefinitionLabel "ontology_xref source_xref_id";
+	d2rq:column "ontology_xref.source_xref_id";
+	d2rq:datatype xsd:integer;
+	.
+map:ontology_xref_linkage_type a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:ontology_xref;
+	d2rq:property vocab:ontology_xref_linkage_type;
+	d2rq:propertyDefinitionLabel "ontology_xref linkage_type";
+	d2rq:column "ontology_xref.linkage_type";
+	.
+
+# Table prediction_transcript
+map:prediction_transcript a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "prediction_transcript/@@prediction_transcript.prediction_transcript_id@@";
+	d2rq:class vocab:prediction_transcript;
+	d2rq:classDefinitionLabel "prediction_transcript";
+	.
+map:prediction_transcript__label a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:prediction_transcript;
+	d2rq:property rdfs:label;
+	d2rq:pattern "prediction_transcript #@@prediction_transcript.prediction_transcript_id@@";
+	.
+map:prediction_transcript_prediction_transcript_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:prediction_transcript;
+	d2rq:property vocab:prediction_transcript_prediction_transcript_id;
+	d2rq:propertyDefinitionLabel "prediction_transcript prediction_transcript_id";
+	d2rq:column "prediction_transcript.prediction_transcript_id";
+	d2rq:datatype xsd:integer;
+	.
+map:prediction_transcript_seq_region_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:prediction_transcript;
+	d2rq:property vocab:seq_region_id;
+	d2rq:propertyDefinitionLabel "prediction_transcript seq_region_id";
+	d2rq:column "prediction_transcript.seq_region_id";
+	d2rq:datatype xsd:integer;
+	.
+map:prediction_transcript_seq_region_start a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:prediction_transcript;
+	d2rq:property vocab:seq_region_start;
+	d2rq:propertyDefinitionLabel "prediction_transcript seq_region_start";
+	d2rq:column "prediction_transcript.seq_region_start";
+	d2rq:datatype xsd:integer;
+	.
+map:prediction_transcript_seq_region_end a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:prediction_transcript;
+	d2rq:property vocab:seq_region_end;
+	d2rq:propertyDefinitionLabel "prediction_transcript seq_region_end";
+	d2rq:column "prediction_transcript.seq_region_end";
+	d2rq:datatype xsd:integer;
+	.
+map:prediction_transcript_seq_region_strand a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:prediction_transcript;
+	d2rq:property vocab:seq_region_strand;
+	d2rq:propertyDefinitionLabel "prediction_transcript seq_region_strand";
+	d2rq:column "prediction_transcript.seq_region_strand";
+	d2rq:datatype xsd:integer;
+	.
+map:prediction_transcript_analysis_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:prediction_transcript;
+	d2rq:property vocab:prediction_transcript_analysis_id;
+	d2rq:propertyDefinitionLabel "prediction_transcript analysis_id";
+	d2rq:column "prediction_transcript.analysis_id";
+	d2rq:datatype xsd:integer;
+	.
+map:prediction_transcript_display_label a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:prediction_transcript;
+	d2rq:property vocab:display_label;
+	d2rq:propertyDefinitionLabel "prediction_transcript display_label";
+	d2rq:column "prediction_transcript.display_label";
+	.
+
+# Table protein_feature
+map:protein_feature a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "protein_feature/@@protein_feature.protein_feature_id@@";
+	d2rq:class vocab:protein_feature;
+	d2rq:classDefinitionLabel "protein_feature";
+	.
+map:protein_feature__label a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:protein_feature;
+	d2rq:property rdfs:label;
+	d2rq:pattern "protein_feature #@@protein_feature.protein_feature_id@@";
+	.
+map:protein_feature_protein_feature_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:protein_feature;
+	d2rq:property vocab:protein_feature_id;
+	d2rq:propertyDefinitionLabel "protein_feature protein_feature_id";
+	d2rq:column "protein_feature.protein_feature_id";
+	d2rq:datatype xsd:integer;
+	.
+map:protein_feature_translation_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:protein_feature;
+	d2rq:property vocab:has_translation;
+	d2rq:propertyDefinitionLabel "protein_feature translation_id";
+	d2rq:refersToClassMap map:translation;
+	d2rq:join "protein_feature.translation_id => translation.translation_id";
+#	d2rq:column "protein_feature.translation_id";
+#	d2rq:datatype xsd:integer;
+	.
+map:protein_feature_seq_region a d2rq:ClassMap
+	; d2rq:dataStorage map:database
+	; d2rq:uriPattern "region/protein_feature_seq_@@protein_feature.protein_feature_id@@"
+	; d2rq:class vocab:protein_feature_seq_region
+	.
+map:protein_feature_seq_region_is_a_region a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:protein_feature_seq_region
+	; d2rq:property rdf:type
+	; d2rq:uriPattern "http://biohackathon.org/resource/faldo#Region"
+	.
+map:protein_feature_to_seq_region a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:protein_feature
+	; d2rq:property faldo:location
+	; d2rq:uriPattern "position/protein_feature_seq_start_@@protein_feature.protein_feature_id@@"
+	.
+#map:protein_feature_is_a_region a d2rq:PropertyBridge
+#	; d2rq:property rdf:type
+#	; d2rq:belongsToClassMap map:protein_feature
+#	; d2rq:uriPattern "http://biohackathon.org/resource/faldo#Region"
+#	.
+map:protein_feature_seq_startPosition a d2rq:ClassMap
+	; d2rq:dataStorage map:database
+	; d2rq:uriPattern "position/protein_feature_seq_start_@@protein_feature.protein_feature_id@@"
+	; d2rq:class faldo:ExactPosition
+	.
+map:protein_feature_seq_startPositionPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:protein_feature_seq_startPosition
+	; d2rq:property faldo:position
+	; d2rq:datatype xsd:long
+	; d2rq:column "protein_feature.seq_start";
+	.
+map:protein_feature_seq_startPositionReference a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:protein_feature_seq_startPosition
+	; d2rq:property faldo:reference
+	; d2rq:refersToClassMap map:translation
+	; d2rq:join "protein_feature.translation_id => translation.translation_id"
+	.
+map:protein_feature_seq_region_to_startPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:protein_feature_seq_region
+	; d2rq:property faldo:begin
+	; d2rq:uriPattern "region/protein_feature_seq_@@protein_feature.protein_feature_id@@"
+	.
+map:protein_feature_seq_endPosition a d2rq:ClassMap
+	; d2rq:dataStorage map:database
+	; d2rq:uriPattern "position/protein_feature_seq_end_@@protein_feature.protein_feature_id@@"
+	; d2rq:class faldo:ExactPosition
+	.
+map:protein_feature_seq_endPositionPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:protein_feature_seq_endPosition
+	; d2rq:property faldo:position
+	; d2rq:datatype xsd:long
+	; d2rq:column "protein_feature.seq_end";
+	.
+map:protein_feature_seq_endPositionReference a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:protein_feature_seq_endPosition
+	; d2rq:property faldo:reference
+	; d2rq:refersToClassMap map:translation
+	; d2rq:join "protein_feature.translation_id => translation.translation_id"
+	.
+map:protein_feature_seq_region_to_endPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:protein_feature_seq_region
+	; d2rq:property faldo:end
+	; d2rq:uriPattern "position/protein_feature_seq_end_@@protein_feature.protein_feature_id@@"
+	.
+map:protein_feature_hit_region a d2rq:ClassMap
+	; d2rq:dataStorage map:database
+	; d2rq:uriPattern "region/protein_feature_hit_@@protein_feature.protein_feature_id@@"
+	; d2rq:class vocab:protein_feature_hit_region
+	.
+map:protein_feature_hit_region_is_a_region a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:protein_feature_hit_region
+	; d2rq:property rdf:type
+	; d2rq:uriPattern "http://biohackathon.org/resource/faldo#Region"
+	.
+map:protein_feature_to_hit_region a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:protein_feature
+	; d2rq:property faldo:location
+	; d2rq:uriPattern "region/protein_feature_hit_@@protein_feature.protein_feature_id@@"
+	.
+map:protein_feature_hit_startPosition a d2rq:ClassMap
+	; d2rq:dataStorage map:database
+	; d2rq:uriPattern "position/protein_feature_hit_start_@@protein_feature.protein_feature_id@@"
+	; d2rq:class faldo:ExactPosition
+	.
+map:protein_feature_hit_startPositionPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:protein_feature_hit_startPosition
+	; d2rq:property faldo:position
+	; d2rq:datatype xsd:integer
+	; d2rq:column "protein_feature.hit_start";
+	.
+map:protein_feature_hit_startPositionReference a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:protein_feature_hit_startPosition
+	; d2rq:property faldo:reference
+	; d2rq:uriPattern "region/protein_feature_seq_@@protein_feature.protein_feature_id@@"
+	.
+map:protein_feature_hit_region_to_startPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:protein_feature_hit_region
+	; d2rq:property faldo:begin
+	; d2rq:uriPattern "region/protein_feature_hit_@@protein_feature.protein_feature_id@@"
+	.
+map:protein_feature_hit_endPosition a d2rq:ClassMap
+	; d2rq:dataStorage map:database
+	; d2rq:uriPattern "position/protein_feature_hit_end_@@protein_feature.protein_feature_id@@"
+	; d2rq:class faldo:ExactPosition
+	.
+map:protein_feature_hit_endPositionPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:protein_feature_hit_endPosition
+	; d2rq:property faldo:position
+	; d2rq:datatype xsd:long
+	; d2rq:column "protein_feature.hit_end";
+	.
+map:protein_feature_hit_endPositionReference a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:protein_feature_hit_endPosition
+	; d2rq:property faldo:reference
+	; d2rq:refersToClassMap map:translation
+	; d2rq:join "protein_feature.translation_id => translation.translation_id"
+	.
+map:protein_feature_hit_region_to_endPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:protein_feature_hit_region
+	; d2rq:property faldo:end
+	; d2rq:uriPattern "position/protein_feature_hit_end_@@protein_feature.protein_feature_id@@"
+	.
+#map:protein_feature_seq_start a d2rq:PropertyBridge;
+#	d2rq:belongsToClassMap map:protein_feature;
+#	d2rq:property vocab:seq_start;
+#	d2rq:propertyDefinitionLabel "protein_feature seq_start";
+#	d2rq:column "protein_feature.seq_start";
+#	d2rq:datatype xsd:integer;
+#	.
+#map:protein_feature_seq_end a d2rq:PropertyBridge;
+#	d2rq:belongsToClassMap map:protein_feature;
+#	d2rq:property vocab:protein_feature_seq_end;
+#	d2rq:propertyDefinitionLabel "protein_feature seq_end";
+#	d2rq:column "protein_feature.seq_end";
+#	d2rq:datatype xsd:integer;
+#	.
+#map:protein_feature_hit_start a d2rq:PropertyBridge;
+#	d2rq:belongsToClassMap map:protein_feature;
+#	d2rq:property vocab:protein_feature_hit_start;
+#	d2rq:propertyDefinitionLabel "protein_feature hit_start";
+#	d2rq:column "protein_feature.hit_start";
+#	d2rq:datatype xsd:integer;
+#	.
+#map:protein_feature_hit_end a d2rq:PropertyBridge;
+#	d2rq:belongsToClassMap map:protein_feature;
+#	d2rq:property vocab:protein_feature_hit_end;
+#	d2rq:propertyDefinitionLabel "protein_feature hit_end";
+#	d2rq:column "protein_feature.hit_end";
+#	d2rq:datatype xsd:integer;
+#	.
+map:protein_feature_hit_name a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:protein_feature;
+	d2rq:property vocab:hit_name;
+	d2rq:propertyDefinitionLabel "protein_feature hit_name";
+	d2rq:column "protein_feature.hit_name";
+	.
+map:protein_feature_analysis_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:protein_feature;
+	d2rq:property vocab:analysis_id;
+	d2rq:propertyDefinitionLabel "protein_feature analysis_id";
+	d2rq:column "protein_feature.analysis_id";
+	d2rq:datatype xsd:integer;
+	.
+map:protein_feature_score a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:protein_feature;
+	d2rq:property vocab:score;
+	d2rq:propertyDefinitionLabel "protein_feature score";
+	d2rq:column "protein_feature.score";
+	d2rq:datatype xsd:double;
+	.
+map:protein_feature_evalue a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:protein_feature;
+	d2rq:property vocab:evalue;
+	d2rq:propertyDefinitionLabel "protein_feature evalue";
+	d2rq:column "protein_feature.evalue";
+	d2rq:datatype xsd:double;
+	.
+map:protein_feature_perc_ident a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:protein_feature;
+	d2rq:property vocab:perc_ident;
+	d2rq:propertyDefinitionLabel "protein_feature perc_ident";
+	d2rq:column "protein_feature.perc_ident";
+	d2rq:datatype xsd:double;
+	.
+map:protein_feature_external_data a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:protein_feature;
+	d2rq:property vocab:external_data;
+	d2rq:propertyDefinitionLabel "protein_feature external_data";
+	d2rq:column "protein_feature.external_data";
+	.
+
+# Table seq_region
+map:seq_region a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "seq_region/@@seq_region.seq_region_id@@";
+	d2rq:class vocab:seq_region;
+	d2rq:classDefinitionLabel "seq_region";
+	.
+map:seq_region__label a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:seq_region;
+	d2rq:property rdfs:label;
+	d2rq:pattern "@@seq_region.name@@";
+	.
+map:seq_region_seq_region_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:seq_region;
+	d2rq:property vocab:seq_region_id;
+	d2rq:propertyDefinitionLabel "seq_region seq_region_id";
+	d2rq:column "seq_region.seq_region_id";
+	d2rq:datatype xsd:integer;
+	.
+map:seq_region_name a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:seq_region;
+	d2rq:property vocab:seq_region_name;
+	d2rq:propertyDefinitionLabel "seq_region name";
+	d2rq:column "seq_region.name";
+	.
+map:seq_region_coord_system_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:seq_region;
+	d2rq:property vocab:has_coord_system;
+	d2rq:propertyDefinitionLabel "seq_region coord_system_id";
+	#d2rq:column "seq_region.coord_system_id";
+	#d2rq:datatype xsd:integer;
+	d2rq:refersToClassMap map:coord_system;
+	d2rq:join "seq_region.coord_system_id => coord_system.coord_system_id"
+	.
+map:seq_region_length a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:seq_region;
+	d2rq:property vocab:seq_region_length;
+	d2rq:propertyDefinitionLabel "seq_region length";
+	d2rq:column "seq_region.length";
+	d2rq:datatype xsd:integer;
+	.
+
+# Table splicing_event
+map:splicing_event a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "splicing_event/@@splicing_event.splicing_event_id@@";
+	d2rq:class vocab:splicing_event;
+	d2rq:classDefinitionLabel "splicing_event";
+	.
+map:splicing_event__label a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:splicing_event;
+	d2rq:property rdfs:label;
+	d2rq:pattern "splicing_event #@@splicing_event.splicing_event_id@@";
+	.
+map:splicing_event_splicing_event_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:splicing_event;
+	d2rq:property vocab:splicing_event_splicing_event_id;
+	d2rq:propertyDefinitionLabel "splicing_event splicing_event_id";
+	d2rq:column "splicing_event.splicing_event_id";
+	d2rq:datatype xsd:integer;
+	.
+map:splicing_event_name a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:splicing_event;
+	d2rq:property vocab:splicing_event_name;
+	d2rq:propertyDefinitionLabel "splicing_event name";
+	d2rq:column "splicing_event.name";
+	.
+map:splicing_event_gene_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:splicing_event;
+	d2rq:property vocab:splicing_event_gene_id;
+	d2rq:propertyDefinitionLabel "splicing_event gene_id";
+	d2rq:column "splicing_event.gene_id";
+	d2rq:datatype xsd:integer;
+	.
+map:splicing_event_seq_region_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:splicing_event;
+	d2rq:property vocab:seq_region_id;
+	d2rq:propertyDefinitionLabel "splicing_event seq_region_id";
+	d2rq:column "splicing_event.seq_region_id";
+	d2rq:datatype xsd:integer;
+	.
+map:splicing_event_seq_region_start a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:splicing_event;
+	d2rq:property vocab:seq_region_start;
+	d2rq:propertyDefinitionLabel "splicing_event seq_region_start";
+	d2rq:column "splicing_event.seq_region_start";
+	d2rq:datatype xsd:integer;
+	.
+map:splicing_event_seq_region_end a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:splicing_event;
+	d2rq:property vocab:seq_region_end;
+	d2rq:propertyDefinitionLabel "splicing_event seq_region_end";
+	d2rq:column "splicing_event.seq_region_end";
+	d2rq:datatype xsd:integer;
+	.
+map:splicing_event_seq_region_strand a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:splicing_event;
+	d2rq:property vocab:seq_region_strand;
+	d2rq:propertyDefinitionLabel "splicing_event seq_region_strand";
+	d2rq:column "splicing_event.seq_region_strand";
+	d2rq:datatype xsd:integer;
+	.
+map:splicing_event_attrib_type_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:splicing_event;
+	d2rq:property vocab:splicing_event_attrib_type_id;
+	d2rq:propertyDefinitionLabel "splicing_event attrib_type_id";
+	d2rq:column "splicing_event.attrib_type_id";
+	d2rq:datatype xsd:integer;
+	.
+
+# Table splicing_transcript_pair
+map:splicing_transcript_pair a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "splicing_transcript_pair/@@splicing_transcript_pair.splicing_transcript_pair_id@@";
+	d2rq:class vocab:splicing_transcript_pair;
+	d2rq:classDefinitionLabel "splicing_transcript_pair";
+	.
+map:splicing_transcript_pair__label a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:splicing_transcript_pair;
+	d2rq:property rdfs:label;
+	d2rq:pattern "splicing_transcript_pair #@@splicing_transcript_pair.splicing_transcript_pair_id@@";
+	.
+map:splicing_transcript_pair_splicing_transcript_pair_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:splicing_transcript_pair;
+	d2rq:property vocab:splicing_transcript_pair_splicing_transcript_pair_id;
+	d2rq:propertyDefinitionLabel "splicing_transcript_pair splicing_transcript_pair_id";
+	d2rq:column "splicing_transcript_pair.splicing_transcript_pair_id";
+	d2rq:datatype xsd:integer;
+	.
+map:splicing_transcript_pair_splicing_event_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:splicing_transcript_pair;
+	d2rq:property vocab:splicing_transcript_pair_splicing_event_id;
+	d2rq:propertyDefinitionLabel "splicing_transcript_pair splicing_event_id";
+	d2rq:column "splicing_transcript_pair.splicing_event_id";
+	d2rq:datatype xsd:integer;
+	.
+map:splicing_transcript_pair_transcript_id_1 a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:splicing_transcript_pair;
+	d2rq:property vocab:splicing_transcript_pair_transcript_id_1;
+	d2rq:propertyDefinitionLabel "splicing_transcript_pair transcript_id_1";
+	d2rq:column "splicing_transcript_pair.transcript_id_1";
+	d2rq:datatype xsd:integer;
+	.
+map:splicing_transcript_pair_transcript_id_2 a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:splicing_transcript_pair;
+	d2rq:property vocab:splicing_transcript_pair_transcript_id_2;
+	d2rq:propertyDefinitionLabel "splicing_transcript_pair transcript_id_2";
+	d2rq:column "splicing_transcript_pair.transcript_id_2";
+	d2rq:datatype xsd:integer;
+	.
+
+# Table supporting_feature
+map:supporting_feature a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	# Sorry, I don't know which columns to put into the uriPattern
+	#     for "supporting_feature" because the table doesn't have a primary key.
+	#     Please specify it manually.
+	d2rq:uriPattern "supporting_feature";
+	d2rq:class vocab:supporting_feature;
+	d2rq:classDefinitionLabel "supporting_feature";
+	.
+map:supporting_feature_exon_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:supporting_feature;
+	d2rq:property vocab:supporting_feature_exon_id;
+	d2rq:propertyDefinitionLabel "supporting_feature exon_id";
+	d2rq:column "supporting_feature.exon_id";
+	d2rq:datatype xsd:integer;
+	.
+map:supporting_feature_feature_type a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:supporting_feature;
+	d2rq:property vocab:supporting_feature_feature_type;
+	d2rq:propertyDefinitionLabel "supporting_feature feature_type";
+	d2rq:column "supporting_feature.feature_type";
+	.
+map:supporting_feature_feature_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:supporting_feature;
+	d2rq:property vocab:supporting_feature_feature_id;
+	d2rq:propertyDefinitionLabel "supporting_feature feature_id";
+	d2rq:column "supporting_feature.feature_id";
+	d2rq:datatype xsd:integer;
+	.
+
+# Table transcript
+map:transcript a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "transcript/@@transcript.transcript_id@@";
+	d2rq:class vocab:transcript;
+	d2rq:classDefinitionLabel "transcript";
+	.
+map:transcript__label a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript;
+	d2rq:property rdfs:label;
+	d2rq:pattern "@@transcript.stable_id@@";
+	.
+map:transcript_transcript_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript;
+	d2rq:property vocab:transcript_id;
+	d2rq:propertyDefinitionLabel "transcript transcript_id";
+	d2rq:column "transcript.transcript_id";
+	d2rq:datatype xsd:integer;
+	.
+map:transcript_gene a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript;
+	d2rq:property vocab:from_gene;
+	d2rq:propertyDefinitionLabel "transcript gene_id";
+	#d2rq:column "transcript.gene_id";
+	#d2rq:datatype xsd:integer;
+	d2rq:refersToClassMap map:gene ;
+	d2rq:join "transcript.gene_id => gene.gene_id";
+	.
+map:transcript_is_a_region a d2rq:PropertyBridge
+	; d2rq:property rdf:type
+	; d2rq:belongsToClassMap map:transcript
+	; d2rq:uriPattern "http://biohackathon.org/resource/faldo#Region"
+	.
+map:transcript_startPosition a d2rq:ClassMap
+	; d2rq:dataStorage map:database
+	; d2rq:uriPattern "position/transcript_start_@@transcript.transcript_id@@"
+	#; d2rq:class faldo:StrandedPosition #redundant. class is assigned later
+	.
+map:transcript_startPositionPositiveStrand a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:transcript_startPosition
+	; d2rq:property rdf:type
+	; d2rq:uriPattern "http://biohackathon.org/resource/faldo#ForwardStrandPosition"
+	; d2rq:condition "transcript.seq_region_strand = 1"
+	.
+map:transcript_startPositionNegativeStrand a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:transcript_startPosition
+	; d2rq:property rdf:type
+	; d2rq:uriPattern "http://biohackathon.org/resource/faldo#ReverseStrandPosition"
+	; d2rq:condition "transcript.seq_region_strand = -1"
+	.
+map:transcript_startPositionPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:transcript_startPosition
+	; d2rq:property faldo:position
+	; d2rq:datatype xsd:long
+	; d2rq:column "transcript.seq_region_start";
+	.
+map:transcript_startPositionReference a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:transcript_startPosition
+	; d2rq:property faldo:reference
+#	; d2rq:column "transcript.seq_region_id"
+#	; d2rq:datatype xsd:integer
+	; d2rq:refersToClassMap map:seq_region
+	; d2rq:join "transcript.seq_region_id => seq_region.seq_region_id"
+	.
+map:transcript_to_startPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:transcript
+	; d2rq:property faldo:begin
+	; d2rq:uriPattern "position/transcript_start_@@transcript.transcript_id@@"
+	.
+map:transcript_endPosition a d2rq:ClassMap
+	; d2rq:dataStorage map:database
+	; d2rq:uriPattern "position/transcript_end_@@transcript.transcript_id@@"
+	; d2rq:class faldo:StrandedPosition
+	.
+map:transcript_endPositionPositiveStrand a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:transcript_endPosition
+	; d2rq:property rdf:type
+	; d2rq:uriPattern "faldo:ForwardStrandPosition"
+	; d2rq:condition "transcript.seq_region_strand = 1"
+	.
+map:transcript_endPositionNegativeStrand a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:transcript_endPosition
+	; d2rq:property rdf:type
+	; d2rq:uriPattern "faldo:ReverseStrandPosition"
+	; d2rq:condition "transcript.seq_region_strand = -1"
+	.
+map:transcript_endPositionPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:transcript_endPosition
+	; d2rq:property faldo:position
+	; d2rq:datatype xsd:long
+	; d2rq:column "transcript.seq_region_end";
+	.
+map:transcript_endPositionReference a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:transcript_endPosition
+	; d2rq:property faldo:reference
+#	; d2rq:column "transcript.seq_region_id"
+#	; d2rq:datatype xsd:integer
+	; d2rq:refersToClassMap map:seq_region
+	; d2rq:join "transcript.seq_region_id => seq_region.seq_region_id"
+	.
+map:transcript_to_endPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:transcript
+	; d2rq:property faldo:end
+	; d2rq:uriPattern "position/transcript_end_@@transcript.transcript_id@@"
+	.
+map:transcript_translation a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:transcript
+	; d2rq:property vocab:has_translation
+	; d2rq:propertyDefinitionLabel "has translation"
+	; d2rq:refersToClassMap map:translation
+	; d2rq:join "transcript.transcript_id <= translation.transcript_id"
+	.
+map:transcript_display_xref_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript;
+	d2rq:property vocab:display_xref;
+	d2rq:propertyDefinitionLabel "transcript display_xref_id";
+	#d2rq:column "transcript.display_xref_id";
+	#d2rq:datatype xsd:integer;
+	d2rq:refersToClassMap map:xref;
+	d2rq:join "transcript.display_xref_id => xref.xref_id";
+	.
+map:transcript_xref a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:transcript
+	; d2rq:refersToClassMap map:xref
+	; d2rq:property vocab:has_xref
+	; d2rq:join "object_xref.ensembl_id => transcript.transcript_id"
+	; d2rq:condition "object_xref.ensembl_object_type = 'Transcript'"
+	.
+map:transcript_biotype a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript;
+	d2rq:property vocab:biotype;
+	d2rq:propertyDefinitionLabel "transcript biotype";
+	d2rq:column "transcript.biotype";
+	.
+map:transcript_status a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript;
+	d2rq:property vocab:status;
+	d2rq:propertyDefinitionLabel "transcript status";
+	d2rq:column "transcript.status";
+	.
+map:transcript_description a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript;
+	d2rq:property vocab:description;
+	d2rq:propertyDefinitionLabel "transcript description";
+	d2rq:column "transcript.description";
+	d2rq:datatype xsd:string;
+	.
+map:transcript_is_current a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript;
+	d2rq:property vocab:is_current;
+	d2rq:propertyDefinitionLabel "transcript is_current";
+	d2rq:column "transcript.is_current";
+	d2rq:datatype xsd:boolean;
+	.
+map:transcript_canonical_translation a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript;
+	d2rq:property vocab:canonical_translation;
+	d2rq:propertyDefinitionLabel "transcript canonical_translation";
+	#d2rq:column "transcript.canonical_translation_id";
+	#d2rq:datatype xsd:integer;
+	d2rq:refersToClassMap map:translation;
+	d2rq:join "transcript.canonical_translation_id => translation.translation_id";
+	.
+map:transcript_stable_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript;
+	d2rq:property vocab:stable_id;
+	d2rq:propertyDefinitionLabel "transcript stable_id";
+	d2rq:column "transcript.stable_id";
+	.
+map:transcript_version a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript;
+	d2rq:property vocab:version;
+	d2rq:propertyDefinitionLabel "transcript version";
+	d2rq:column "transcript.version";
+	d2rq:datatype xsd:integer;
+	.
+map:transcript_created_date a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript;
+	d2rq:property vocab:created_date;
+	d2rq:propertyDefinitionLabel "transcript created_date";
+	d2rq:column "transcript.created_date";
+	d2rq:datatype xsd:dateTime;
+	.
+map:transcript_modified_date a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript;
+	d2rq:property vocab:odified_date;
+	d2rq:propertyDefinitionLabel "transcript modified_date";
+	d2rq:column "transcript.modified_date";
+	d2rq:datatype xsd:dateTime;
+	.
+map:transcript_exons a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript;
+	d2rq:property vocab:has_member;
+	d2rq:propertyDefinitionLabel "contains exon";
+	d2rq:refersToClassMap map:exon;
+	d2rq:join "transcript.transcript_id <= exon_transcript.transcript_id";
+	d2rq:join "exon.exon_id <= exon_transcript.exon_id";
+	.
+# Table transcript_attrib
+map:transcript_attrib a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	# Sorry, I don't know which columns to put into the uriPattern
+	#     for "transcript_attrib" because the table doesn't have a primary key.
+	#     Please specify it manually.
+	d2rq:uriPattern "transcript_attrib";
+	d2rq:class vocab:transcript_attrib;
+	d2rq:classDefinitionLabel "transcript_attrib";
+	.
+map:transcript_attrib_transcript_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript_attrib;
+	d2rq:property vocab:transcript_attrib_transcript_id;
+	d2rq:propertyDefinitionLabel "transcript_attrib transcript_id";
+	d2rq:column "transcript_attrib.transcript_id";
+	d2rq:datatype xsd:integer;
+	.
+map:transcript_attrib_attrib_type_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript_attrib;
+	d2rq:property vocab:transcript_attrib_attrib_type_id;
+	d2rq:propertyDefinitionLabel "transcript_attrib attrib_type_id";
+	d2rq:column "transcript_attrib.attrib_type_id";
+	d2rq:datatype xsd:integer;
+	.
+map:transcript_attrib_value a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript_attrib;
+	d2rq:property vocab:transcript_attrib_value;
+	d2rq:propertyDefinitionLabel "transcript_attrib value";
+	d2rq:column "transcript_attrib.value";
+	.
+
+# Table transcript_supporting_feature
+map:transcript_supporting_feature a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	# Sorry, I don't know which columns to put into the uriPattern
+	#     for "transcript_supporting_feature" because the table doesn't have a primary key.
+	#     Please specify it manually.
+	d2rq:uriPattern "transcript_supporting_feature";
+	d2rq:class vocab:transcript_supporting_feature;
+	d2rq:classDefinitionLabel "transcript_supporting_feature";
+	.
+map:transcript_supporting_feature_transcript_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript_supporting_feature;
+	d2rq:property vocab:transcript_supporting_feature_transcript_id;
+	d2rq:propertyDefinitionLabel "transcript_supporting_feature transcript_id";
+	d2rq:column "transcript_supporting_feature.transcript_id";
+	d2rq:datatype xsd:integer;
+	.
+map:transcript_supporting_feature_feature_type a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript_supporting_feature;
+	d2rq:property vocab:transcript_supporting_feature_feature_type;
+	d2rq:propertyDefinitionLabel "transcript_supporting_feature feature_type";
+	d2rq:column "transcript_supporting_feature.feature_type";
+	.
+map:transcript_supporting_feature_feature_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript_supporting_feature;
+	d2rq:property vocab:transcript_supporting_feature_feature_id;
+	d2rq:propertyDefinitionLabel "transcript_supporting_feature feature_id";
+	d2rq:column "transcript_supporting_feature.feature_id";
+	d2rq:datatype xsd:integer;
+	.
+
+# Table translation
+map:translation a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "translation/@@translation.translation_id@@";
+	d2rq:class vocab:translation;
+	d2rq:classDefinitionLabel "translation";
+	.
+map:translation__label a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:translation;
+	d2rq:property rdfs:label;
+	d2rq:pattern "translation #@@translation.translation_id@@";
+	.
+map:translation_translation_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:translation;
+	d2rq:property vocab:translation_id;
+	d2rq:propertyDefinitionLabel "translation translation_id";
+	d2rq:column "translation.translation_id";
+	d2rq:datatype xsd:integer;
+	.
+map:translation_transcript_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:translation;
+	d2rq:property vocab:from_transcript;
+	d2rq:propertyDefinitionLabel "translation transcript_id";
+	#d2rq:column "translation.transcript_id";
+	#d2rq:datatype xsd:integer;
+	d2rq:refersToClassMap map:translation;
+	d2rq:join "translation.transcript_id => transcript.transcript_id";
+	.
+map:translation_startPosition a d2rq:ClassMap
+	; d2rq:dataStorage map:database
+	; d2rq:uriPattern "position/translation_start_@@translation.translation_id@@"
+	; d2rq:class faldo:ExactPosition #redundant. class is assigned later
+	.
+map:translation_startPositionPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:translation_startPosition
+	; d2rq:property faldo:position
+	; d2rq:datatype xsd:long
+	; d2rq:column "translation.seq_start";
+	.
+map:translation_startPositionReference a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:translation_startPosition
+	; d2rq:property faldo:reference
+	; d2rq:refersToClassMap map:exon
+	; d2rq:join "translation.start_exon_id => exon.exon_id"
+	.
+map:translation_to_startPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:exon
+	; d2rq:property faldo:begin
+	; d2rq:uriPattern "position/translation_start_@@translation.translation_id@@"
+	.
+#map:translation_seq_start a d2rq:PropertyBridge;
+#	d2rq:belongsToClassMap map:translation;
+#	d2rq:property vocab:seq_start;
+#	d2rq:propertyDefinitionLabel "translation seq_start";
+#	d2rq:column "translation.seq_start";
+#	d2rq:datatype xsd:integer;
+#	.
+map:translation_start_exon_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:translation;
+	d2rq:property vocab:start_exon;
+	d2rq:propertyDefinitionLabel "translation start_exon_id";
+	#d2rq:column "translation.start_exon_id";
+	#d2rq:datatype xsd:integer;
+	d2rq:refersToClassMap map:exon;
+	d2rq:join "translation.start_exon_id => exon.exon_id";
+	.
+map:translation_endPosition a d2rq:ClassMap
+	; d2rq:dataStorage map:database
+	; d2rq:uriPattern "position/translation_end_@@translation.translation_id@@"
+	; d2rq:class faldo:ExactPosition #redundant. class is assigned later
+	.
+map:translation_endPositionPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:translation_endPosition
+	; d2rq:property faldo:position
+	; d2rq:datatype xsd:long
+	; d2rq:column "translation.seq_end";
+	.
+map:translation_endPositionReference a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:translation_endPosition
+	; d2rq:property faldo:reference
+	; d2rq:refersToClassMap map:exon
+	; d2rq:join "translation.end_exon_id => exon.exon_id"
+	.
+map:translation_to_endPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:exon
+	; d2rq:property faldo:end
+	; d2rq:uriPattern "position/translation_end_@@translation.translation_id@@"
+	.
+#map:translation_seq_end a d2rq:PropertyBridge;
+#	d2rq:belongsToClassMap map:translation;
+#	d2rq:property vocab:seq_end;
+#	d2rq:propertyDefinitionLabel "translation seq_end";
+#	d2rq:column "translation.seq_end";
+#	d2rq:datatype xsd:integer;
+#	.
+map:translation_end_exon_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:translation;
+	d2rq:property vocab:end_exon_id;
+	d2rq:propertyDefinitionLabel "translation end_exon_id";
+	#d2rq:column "translation.end_exon";
+	#d2rq:datatype xsd:integer;
+	d2rq:refersToClassMap map:exon;
+	d2rq:join "translation.end_exon_id => exon.exon_id";
+	.
+map:translation_stable_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:translation;
+	d2rq:property vocab:stable_id;
+	d2rq:propertyDefinitionLabel "translation stable_id";
+	d2rq:column "translation.stable_id";
+	.
+map:translation_version a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:translation;
+	d2rq:property vocab:version;
+	d2rq:propertyDefinitionLabel "translation version";
+	d2rq:column "translation.version";
+	d2rq:datatype xsd:integer;
+	.
+map:translation_created_date a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:translation;
+	d2rq:property vocab:created_date;
+	d2rq:propertyDefinitionLabel "translation created_date";
+	d2rq:column "translation.created_date";
+	d2rq:datatype xsd:dateTime;
+	.
+map:translation_modified_date a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:translation;
+	d2rq:property vocab:modified_date;
+	d2rq:propertyDefinitionLabel "translation modified_date";
+	d2rq:column "translation.modified_date";
+	d2rq:datatype xsd:dateTime;
+	.
+map:translation_xref a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:translation
+	; d2rq:refersToClassMap map:xref
+	; d2rq:property vocab:has_xref
+	; d2rq:join "object_xref.ensembl_id => translation.translation_id"
+	; d2rq:condition "object_xref.ensembl_object_type = 'Translation'"
+	.
+map:translation_annotation a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:translation
+	; d2rq:property vocab:is_annotated_with_term
+	; d2rq:join "object_xref.ensembl_id => translation.translation_id"
+	; d2rq:condition "object_xref.ensembl_object_type = 'Translation'"
+	; d2rq:join "object_xref.xref_id => xref.xref_id"
+	; d2rq:join "xref.external_db_id => external_db.external_db_id"
+	; d2rq:condition "external_db.db_name = 'GO'"
+	; d2rq:uriSqlExpression "concat('http://www.semantic-systems-biology.org/SSB#GO_',substring(xref.display_label from 4))"
+	.
+
+
+
+# Table translation_attrib
+map:translation_attrib a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	# Sorry, I don't know which columns to put into the uriPattern
+	#     for "translation_attrib" because the table doesn't have a primary key.
+	#     Please specify it manually.
+	d2rq:uriPattern "translation_attrib";
+	d2rq:class vocab:translation_attrib;
+	d2rq:classDefinitionLabel "translation_attrib";
+	.
+map:translation_attrib_translation_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:translation_attrib;
+	d2rq:property vocab:translation_attrib_translation_id;
+	d2rq:propertyDefinitionLabel "translation_attrib translation_id";
+	d2rq:column "translation_attrib.translation_id";
+	d2rq:datatype xsd:integer;
+	.
+map:translation_attrib_attrib_type_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:translation_attrib;
+	d2rq:property vocab:translation_attrib_attrib_type_id;
+	d2rq:propertyDefinitionLabel "translation_attrib attrib_type_id";
+	d2rq:column "translation_attrib.attrib_type_id";
+	d2rq:datatype xsd:integer;
+	.
+map:translation_attrib_value a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:translation_attrib;
+	d2rq:property vocab:translation_attrib_value;
+	d2rq:propertyDefinitionLabel "translation_attrib value";
+	d2rq:column "translation_attrib.value";
+	.
+
+# Table xref
+map:xref a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "xref/@@xref.xref_id@@";
+	d2rq:class vocab:xref;
+	d2rq:classDefinitionLabel "xref";
+	.
+map:xref__label a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:xref;
+	d2rq:property rdfs:label;
+	d2rq:pattern "@@xref.display_label@@";
+	.
+map:xref_xref_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:xref;
+	d2rq:property vocab:xref_id;
+	d2rq:propertyDefinitionLabel "xref xref_id";
+	d2rq:column "xref.xref_id";
+	d2rq:datatype xsd:integer;
+	.
+map:xref_external_db_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:xref;
+	d2rq:property vocab:has_external_db;
+	d2rq:refersToClassMap map:external_db;
+	d2rq:join "xref.external_db_id => external_db.external_db_id";
+	d2rq:propertyDefinitionLabel "xref external_db_id";
+#	d2rq:column "xref.external_db_id";
+#	d2rq:datatype xsd:integer;
+	.
+map:xref_dbprimary_acc a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:xref;
+	d2rq:property vocab:dbprimary_acc;
+	d2rq:propertyDefinitionLabel "xref dbprimary_acc";
+	d2rq:column "xref.dbprimary_acc";
+	.
+map:xref_display_label a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:xref;
+	d2rq:property vocab:display_label;
+	d2rq:propertyDefinitionLabel "xref display_label";
+	d2rq:column "xref.display_label";
+	.
+map:xref_version a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:xref;
+	d2rq:property vocab:version;
+	d2rq:propertyDefinitionLabel "xref version";
+	d2rq:column "xref.version";
+	.
+map:xref_description a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:xref;
+	d2rq:property vocab:description;
+	d2rq:propertyDefinitionLabel "xref description";
+	d2rq:column "xref.description";
+	.
+map:xref_info_type a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:xref;
+	d2rq:property vocab:info_type;
+	d2rq:propertyDefinitionLabel "xref info_type";
+	d2rq:column "xref.info_type";
+	.
+map:xref_info_text a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:xref;
+	d2rq:property vocab:info_text;
+	d2rq:propertyDefinitionLabel "xref info_text";
+	d2rq:column "xref.info_text";
+	.
+
