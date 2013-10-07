@@ -1,1 +1,611 @@
+@prefix map: <#> .
+@prefix db: <> .
+#@prefix vocab: <vocab/> .
+#@prefix vocab: <http://www.boinq.org/homo_sapiens_core_71_37#> .
+@prefix vocab: <http://www.boinq.org/homo_sapiens_core_71_37_simple#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix d2rq: <http://www.wiwiss.fu-berlin.de/suhl/bizer/D2RQ/0.1#> .
+@prefix jdbc: <http://d2rq.org/terms/jdbc/> .
+@prefix faldo: <http://biohackathon.org/resource/faldo#> .
+@prefix boinq: <http://www.boinq.org/datasource#> .
+
+
+
 map:database a d2rq:Database;
+	d2rq:jdbcDriver "com.mysql.jdbc.Driver";
+#	TODO: change your jdbc url and add user/pass
+#	d2rq:jdbcDSN "jdbc:mysql://localhost/homo_sapiens_core_71_37";
+#	d2rq:username "USER";
+#	d2rq:password "PASS";
+	d2rq:fetchSize 10;
+	jdbc:autoReconnect "true";
+	jdbc:zeroDateTimeBehavior "convertToNull";
+	.
+map:Configuration a d2rq:Configuration;
+    d2rq:useAllOptimizations true
+    .
+
+
+# Table seq_region: chromosome
+map:chromosome a d2rq:ClassMap
+	; d2rq:dataStorage map:database
+	; d2rq:uriPattern "chromosome/@@seq_region.seq_region_id@@"
+	; d2rq:class vocab:chromosome
+	; d2rq:condition "seq_region.coord_system_id=2"
+	; d2rq:classDefinitionLabel "chromosome"
+	.
+map:chromosome_name a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:chromosome
+	; d2rq:property vocab:name
+	; d2rq:property rdfs:label
+	; d2rq:propertyDefinitionLabel "chromosome name"
+	; d2rq:column "seq_region.name"
+	; d2rq:datatype xsd:string
+	.
+
+
+# Table external_db
+map:external_db a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "external_db/@@external_db.external_db_id@@";
+	d2rq:class vocab:external_db;
+	d2rq:classDefinitionLabel "external_db";
+	.
+map:external_db__label a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:external_db;
+	d2rq:property rdfs:label;
+	d2rq:pattern "external_db #@@external_db.db_name@@";
+	.
+
+# Table gene
+map:gene a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "gene/@@gene.gene_id@@";
+	d2rq:class vocab:gene;
+	d2rq:classDefinitionLabel "gene";
+	.
+map:gene__label a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property rdfs:label;
+	d2rq:pattern "@@gene.stable_id@@";
+	.
+map:gene_gene_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property vocab:gene_id;
+	d2rq:propertyDefinitionLabel "gene gene_id";
+	d2rq:column "gene.gene_id";
+	d2rq:datatype xsd:integer;
+	.
+map:gene_is_a_region a d2rq:PropertyBridge
+	; d2rq:property rdf:type
+	; d2rq:belongsToClassMap map:gene
+	; d2rq:uriPattern "http://biohackathon.org/resource/faldo#Region"
+	.
+map:gene_startPosition a d2rq:ClassMap
+	; d2rq:dataStorage map:database
+	; d2rq:uriPattern "position/gene_start_@@gene.gene_id@@"
+	#; d2rq:class faldo:StrandedPosition #redundant. class is assigned later
+	.
+map:gene_startPositionPositiveStrand a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:gene_startPosition
+	; d2rq:property rdf:type
+	; d2rq:uriPattern "http://biohackathon.org/resource/faldo#ForwardStrandPosition"
+	; d2rq:condition "gene.seq_region_strand = 1"
+	.
+map:gene_startPositionNegativeStrand a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:gene_startPosition
+	; d2rq:property rdf:type
+	; d2rq:uriPattern "http://biohackathon.org/resource/faldo#ReverseStrandPosition"
+	; d2rq:condition "gene.seq_region_strand = -1"
+	.
+map:gene_startPositionPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:gene_startPosition
+	; d2rq:property faldo:position
+	; d2rq:datatype xsd:long
+	; d2rq:column "gene.seq_region_start";
+	.
+map:gene_startPositionReference a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:gene_startPosition
+	; d2rq:property faldo:reference
+#	; d2rq:join "gene.seq_region_id => seq_region.seq_region_id"
+#	; d2rq:sqlExpression "concat('chr',seq_region.name)"
+#	; d2rq:datatype xsd:string
+	; d2rq:refersToClassMap map:chromosome
+	; d2rq:join "gene.seq_region_id => seq_region.seq_region_id"
+	.
+map:gene_to_startPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:gene
+	; d2rq:property faldo:begin
+	; d2rq:uriPattern "position/gene_start_@@gene.gene_id@@"
+	.
+map:gene_endPosition a d2rq:ClassMap
+	; d2rq:dataStorage map:database
+	; d2rq:uriPattern "position/gene_end_@@gene.gene_id@@"
+	#; d2rq:class faldo:StrandedPosition #redundant. class is assigned later
+	.
+map:gene_endPositionPositiveStrand a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:gene_endPosition
+	; d2rq:property rdf:type
+	; d2rq:uriPattern "http://biohackathon.org/resource/faldo#ForwardStrandPosition"
+	; d2rq:condition "gene.seq_region_strand = 1"
+	.
+map:gene_endPositionNegativeStrand a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:gene_endPosition
+	; d2rq:property rdf:type
+	; d2rq:uriPattern "http://biohackathon.org/resource/faldo#ReverseStrandPosition"
+	; d2rq:condition "gene.seq_region_strand = -1"
+	.
+map:gene_endPositionPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:gene_endPosition
+	; d2rq:property faldo:position
+	; d2rq:datatype xsd:long
+	; d2rq:column "gene.seq_region_end";
+	.
+#map:gene_endPositionReference a d2rq:PropertyBridge
+#	; d2rq:belongsToClassMap map:gene_endPosition
+#	; d2rq:property faldo:reference
+#	; d2rq:refersToClassMap map:chromosome
+#	; d2rq:join "gene.seq_region_id => seq_region.seq_region_id"
+#	.
+map:gene_to_endPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:gene
+	; d2rq:property faldo:end
+	; d2rq:uriPattern "position/gene_end_@@gene.gene_id@@"
+	.
+map:gene_display_xref a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property vocab:display_xref;
+	d2rq:propertyDefinitionLabel "gene display_xref";
+	#d2rq:column "gene.display_xref_id";
+	#d2rq:datatype xsd:integer;
+	d2rq:refersToClassMap map:xref;
+	d2rq:join "gene.display_xref_id => xref.xref_id";
+	.
+map:gene_description a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property rdfs:comment;
+	d2rq:column "gene.description";
+	d2rq:datatype xsd:string
+	.
+map:gene_xref a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:gene
+	; d2rq:refersToClassMap map:xref
+	; d2rq:property vocab:has_xref
+	; d2rq:join "object_xref.ensembl_id => gene.gene_id"
+	; d2rq:condition "object_xref.ensembl_object_type = 'Gene'"
+	.
+map:gene_annotation a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:gene
+	; d2rq:property boinq:externalGOTerm
+	; d2rq:join "gene.canonical_transcript_id => transcript.transcript_id"
+	; d2rq:join "transcript.canonical_translation_id => translation.translation_id"
+	; d2rq:join "object_xref.ensembl_id => translation.translation_id"
+	; d2rq:join "object_xref.xref_id => xref.xref_id"
+	; d2rq:condition "object_xref.ensembl_object_type = 'Translation'"
+	; d2rq:condition "xref.external_db_id = 1000"
+#	; d2rq:uriSqlExpression "concat('http://purl.obolibrary.org/obo/GO_',substring(xref.display_label from 4))"
+# 	not working well, therefore add column:
+#   alter table xref add column purl_uri varchar(50);
+#   create index uri_index on xref (purl_uri);
+#   update xref set purl_uri = concat('http://purl.obolibrary.org/obo/GO_',substring(display_label,4)) where external_db_id = 1000;
+	; d2rq:column "xref.purl_uri"
+	.
+map:gene_canonical_transcript_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:gene;
+	d2rq:property vocab:canonical_transcript;
+	d2rq:propertyDefinitionLabel "gene canonical_transcript_id";
+	#d2rq:column "gene.canonical_transcript_id";
+	#d2rq:datatype xsd:integer;
+	d2rq:refersToClassMap map:transcript;
+	d2rq:join "gene.canonical_transcript_id => transcript.transcript_id";
+	.
+map:gene_transcripts a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:gene
+	; d2rq:property vocab:has_transcript
+	; d2rq:propertyDefinitionLabel "has transcripts"
+	; d2rq:refersToClassMap map:transcript
+	; d2rq:join "gene.gene_id <= transcript.gene_id"
+	.
+
+# Table transcript
+map:transcript a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "transcript/@@transcript.transcript_id@@";
+	d2rq:class vocab:transcript;
+	d2rq:classDefinitionLabel "transcript";
+	.
+map:transcript__label a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript;
+	d2rq:property rdfs:label;
+	d2rq:pattern "@@transcript.stable_id@@";
+	.
+map:transcript_transcript_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript;
+	d2rq:property vocab:transcript_id;
+	d2rq:propertyDefinitionLabel "transcript transcript_id";
+	d2rq:column "transcript.transcript_id";
+	d2rq:datatype xsd:integer;
+	.
+map:transcript_gene a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript;
+	d2rq:property vocab:from_gene;
+	d2rq:propertyDefinitionLabel "transcript gene_id";
+	d2rq:refersToClassMap map:gene ;
+	d2rq:join "transcript.gene_id => gene.gene_id";
+	.
+map:transcript_is_a_region a d2rq:PropertyBridge
+	; d2rq:property rdf:type
+	; d2rq:belongsToClassMap map:transcript
+	; d2rq:uriPattern "http://biohackathon.org/resource/faldo#Region"
+	.
+map:transcript_startPosition a d2rq:ClassMap
+	; d2rq:dataStorage map:database
+	; d2rq:uriPattern "position/transcript_start_@@transcript.transcript_id@@"
+	#; d2rq:class faldo:StrandedPosition #redundant. class is assigned later
+	.
+map:transcript_startPositionPositiveStrand a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:transcript_startPosition
+	; d2rq:property rdf:type
+	; d2rq:uriPattern "http://biohackathon.org/resource/faldo#ForwardStrandPosition"
+	; d2rq:condition "transcript.seq_region_strand = 1"
+	.
+map:transcript_startPositionNegativeStrand a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:transcript_startPosition
+	; d2rq:property rdf:type
+	; d2rq:uriPattern "http://biohackathon.org/resource/faldo#ReverseStrandPosition"
+	; d2rq:condition "transcript.seq_region_strand = -1"
+	.
+map:transcript_startPositionPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:transcript_startPosition
+	; d2rq:property faldo:position
+	; d2rq:datatype xsd:long
+	; d2rq:column "transcript.seq_region_start";
+	.
+map:transcript_startPositionReference a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:transcript_startPosition
+	; d2rq:property faldo:reference
+	; d2rq:refersToClassMap map:chromosome
+	; d2rq:join "transcript.seq_region_id => seq_region.seq_region_id"
+	.
+map:transcript_to_startPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:transcript
+	; d2rq:property faldo:begin
+	; d2rq:uriPattern "position/transcript_start_@@transcript.transcript_id@@"
+	.
+map:transcript_endPosition a d2rq:ClassMap
+	; d2rq:dataStorage map:database
+	; d2rq:uriPattern "position/transcript_end_@@transcript.transcript_id@@"
+	; d2rq:class faldo:StrandedPosition
+	.
+map:transcript_endPositionPositiveStrand a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:transcript_endPosition
+	; d2rq:property rdf:type
+	; d2rq:uriPattern "faldo:ForwardStrandPosition"
+	; d2rq:condition "transcript.seq_region_strand = 1"
+	.
+map:transcript_endPositionNegativeStrand a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:transcript_endPosition
+	; d2rq:property rdf:type
+	; d2rq:uriPattern "faldo:ReverseStrandPosition"
+	; d2rq:condition "transcript.seq_region_strand = -1"
+	.
+map:transcript_endPositionPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:transcript_endPosition
+	; d2rq:property faldo:position
+	; d2rq:datatype xsd:long
+	; d2rq:column "transcript.seq_region_end";
+	.
+#map:transcript_endPositionReference a d2rq:PropertyBridge
+#	; d2rq:belongsToClassMap map:transcript_endPosition
+#	; d2rq:property faldo:reference
+#	; d2rq:refersToClassMap map:chromosome
+#	; d2rq:join "transcript.seq_region_id => seq_region.seq_region_id"
+#	.
+map:transcript_to_endPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:transcript
+	; d2rq:property faldo:end
+	; d2rq:uriPattern "position/transcript_end_@@transcript.transcript_id@@"
+	.
+#map:transcript_translation a d2rq:PropertyBridge
+#	; d2rq:belongsToClassMap map:transcript
+#	; d2rq:property vocab:has_translation
+#	; d2rq:propertyDefinitionLabel "has translation"
+#	; d2rq:refersToClassMap map:translation
+#	; d2rq:join "transcript.transcript_id <= translation.transcript_id"
+#	.
+map:transcript_display_xref_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript;
+	d2rq:property vocab:display_xref;
+	d2rq:propertyDefinitionLabel "transcript display_xref_id";
+	#d2rq:column "transcript.display_xref_id";
+	#d2rq:datatype xsd:integer;
+	d2rq:refersToClassMap map:xref;
+	d2rq:join "transcript.display_xref_id => xref.xref_id";
+	.
+map:transcript_xref a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:transcript
+	; d2rq:refersToClassMap map:xref
+	; d2rq:property vocab:has_xref
+	; d2rq:join "object_xref.ensembl_id => transcript.transcript_id"
+	; d2rq:condition "object_xref.ensembl_object_type = 'Transcript'"
+	.
+map:transcript_description a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript;
+	d2rq:property vocab:description;
+	d2rq:propertyDefinitionLabel "transcript description";
+	d2rq:column "transcript.description";
+	d2rq:datatype xsd:string;
+	.
+map:transcript_canonical_translation a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript;
+	d2rq:property vocab:canonical_translation;
+	d2rq:propertyDefinitionLabel "transcript canonical_translation";
+	#d2rq:column "transcript.canonical_translation_id";
+	#d2rq:datatype xsd:integer;
+	d2rq:refersToClassMap map:translation;
+	d2rq:join "transcript.canonical_translation_id => translation.translation_id";
+	.
+map:transcript_stable_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript;
+	d2rq:property vocab:stable_id;
+	d2rq:propertyDefinitionLabel "transcript stable_id";
+	d2rq:column "transcript.stable_id";
+	.
+map:transcript_exons a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:transcript;
+	d2rq:property vocab:has_exon;
+	d2rq:propertyDefinitionLabel "contains exon";
+	d2rq:refersToClassMap map:exon;
+	d2rq:join "transcript.transcript_id <= exon_transcript.transcript_id";
+	d2rq:join "exon.exon_id <= exon_transcript.exon_id";
+	.
+map:transcript_translation a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:translation;
+	d2rq:property vocab:has_translation;
+	d2rq:propertyDefinitionLabel "has translation";
+	d2rq:refersToClassMap map:translation;
+	d2rq:join "translation.transcript_id => transcript.transcript_id";
+	.
+
+
+# Table translation
+map:translation a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "translation/@@translation.translation_id@@";
+	d2rq:class vocab:translation;
+	d2rq:classDefinitionLabel "translation";
+	.
+map:translation__label a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:translation;
+	d2rq:property rdfs:label;
+	d2rq:pattern "translation #@@translation.translation_id@@";
+	.
+map:translation_translation_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:translation;
+	d2rq:property vocab:translation_id;
+	d2rq:propertyDefinitionLabel "translation translation_id";
+	d2rq:column "translation.translation_id";
+	d2rq:datatype xsd:integer;
+	.
+map:translation_transcript a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:translation;
+	d2rq:property vocab:from_transcript;
+	d2rq:propertyDefinitionLabel "translation transcript_id";
+	d2rq:refersToClassMap map:translation;
+	d2rq:join "translation.transcript_id => transcript.transcript_id";
+	.
+map:translation_startPosition a d2rq:ClassMap
+	; d2rq:dataStorage map:database
+	; d2rq:uriPattern "position/translation_start_@@translation.translation_id@@"
+	; d2rq:class faldo:ExactPosition #redundant. class is assigned later
+	.
+map:translation_startPositionPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:translation_startPosition
+	; d2rq:property faldo:position
+	; d2rq:datatype xsd:long
+	; d2rq:column "translation.seq_start";
+	.
+map:translation_startPositionReference a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:translation_startPosition
+	; d2rq:property faldo:reference
+	; d2rq:refersToClassMap map:exon
+	; d2rq:join "translation.start_exon_id => exon.exon_id"
+	.
+map:translation_to_startPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:exon
+	; d2rq:property faldo:begin
+	; d2rq:uriPattern "position/translation_start_@@translation.translation_id@@"
+	.
+#map:translation_start_exon_id a d2rq:PropertyBridge;
+#	d2rq:belongsToClassMap map:translation;
+#	d2rq:property vocab:start_exon;
+#	d2rq:propertyDefinitionLabel "translation start_exon_id";
+#	#d2rq:column "translation.start_exon_id";
+#	#d2rq:datatype xsd:integer;
+#	d2rq:refersToClassMap map:exon;
+#	d2rq:join "translation.start_exon_id => exon.exon_id";
+#	.
+map:translation_endPosition a d2rq:ClassMap
+	; d2rq:dataStorage map:database
+	; d2rq:uriPattern "position/translation_end_@@translation.translation_id@@"
+	; d2rq:class faldo:ExactPosition #redundant. class is assigned later
+	.
+map:translation_endPositionPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:translation_endPosition
+	; d2rq:property faldo:position
+	; d2rq:datatype xsd:long
+	; d2rq:column "translation.seq_end";
+	.
+map:translation_endPositionReference a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:translation_endPosition
+	; d2rq:property faldo:reference
+	; d2rq:refersToClassMap map:exon
+	; d2rq:join "translation.end_exon_id => exon.exon_id"
+	.
+map:translation_to_endPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:exon
+	; d2rq:property faldo:end
+	; d2rq:uriPattern "position/translation_end_@@translation.translation_id@@"
+	.
+#map:translation_seq_end a d2rq:PropertyBridge;
+#	d2rq:belongsToClassMap map:translation;
+#	d2rq:property vocab:seq_end;
+#	d2rq:propertyDefinitionLabel "translation seq_end";
+#	d2rq:column "translation.seq_end";
+#	d2rq:datatype xsd:integer;
+#	.
+#map:translation_end_exon_id a d2rq:PropertyBridge;
+#	d2rq:belongsToClassMap map:translation;
+#	d2rq:property vocab:end_exon;
+#	d2rq:propertyDefinitionLabel "translation end_exon_id";
+#	d2rq:refersToClassMap map:exon;
+#	d2rq:join "translation.end_exon_id => exon.exon_id";
+#	.
+map:translation_xref a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:translation
+	; d2rq:refersToClassMap map:xref
+	; d2rq:property vocab:has_xref
+	; d2rq:join "object_xref.ensembl_id => translation.translation_id"
+	; d2rq:condition "object_xref.ensembl_object_type = 'Translation'"
+	.
+map:translation_annotation a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:translation
+	; d2rq:property vocab:is_annotated_with_term
+	; d2rq:join "object_xref.ensembl_id => translation.translation_id"
+	; d2rq:condition "object_xref.ensembl_object_type = 'Translation'"
+	; d2rq:join "object_xref.xref_id => xref.xref_id"
+	; d2rq:condition "xref.external_db_id = 1000"
+	; d2rq:column "xref.purl_uri"
+	.
+
+# alter table xref add column purl_uri varchar(50);
+# create index uri_index on xref (purl_uri);
+# update xref set purl_uri = concat('http://purl.obolibrary.org/obo/GO_',substring(display_label,4)) where external_db_id = 1000;
+
+# Table exon
+map:exon a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	# must use an indexed value as an id because this value is used often in joins
+	# even in queries within same table
+	d2rq:uriPattern "exon/@@exon.exon_id@@";
+	d2rq:class vocab:exon;
+	d2rq:classDefinitionLabel "exon";
+	.
+map:exon__label a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:exon;
+	d2rq:property rdfs:label;
+	d2rq:pattern "@@exon.stable_id@@";
+	.
+map:exon_exon_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:exon;
+	d2rq:property vocab:exon_id;
+	d2rq:propertyDefinitionLabel "exon exon_id";
+	d2rq:column "exon.exon_id";
+	d2rq:datatype xsd:integer;
+	.
+map:exon_is_a_region a d2rq:PropertyBridge
+	; d2rq:property rdf:type
+	; d2rq:belongsToClassMap map:exon
+	; d2rq:uriPattern "http://biohackathon.org/resource/faldo#Region"
+	.
+map:exon_startPosition a d2rq:ClassMap
+	; d2rq:dataStorage map:database
+	; d2rq:uriPattern "position/exon_start_@@exon.exon_id@@"
+	#; d2rq:class faldo:StrandedPosition #redundant. class is assigned later
+	.
+map:exon_startPositionPositiveStrand a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:exon_startPosition
+	; d2rq:property rdf:type
+	; d2rq:uriPattern "http://biohackathon.org/resource/faldo#ForwardStrandPosition"
+	; d2rq:condition "exon.seq_region_strand = 1"
+	.
+map:exon_startPositionNegativeStrand a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:exon_startPosition
+	; d2rq:property rdf:type
+	; d2rq:uriPattern "http://biohackathon.org/resource/faldo#ReverseStrandPosition"
+	; d2rq:condition "exon.seq_region_strand = -1"
+	.
+map:exon_startPositionPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:exon_startPosition
+	; d2rq:property faldo:position
+	; d2rq:datatype xsd:long
+	; d2rq:column "exon.seq_region_start";
+	.
+map:exon_startPositionReference a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:exon_startPosition
+	; d2rq:property faldo:reference
+	; d2rq:refersToClassMap map:chromosome
+	; d2rq:join "exon.seq_region_id => seq_region.seq_region_id"
+	.
+map:exon_to_startPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:exon
+	; d2rq:property faldo:begin
+	; d2rq:uriPattern "position/exon_start_@@exon.exon_id@@"
+	.
+map:exon_endPosition a d2rq:ClassMap
+	; d2rq:dataStorage map:database
+	; d2rq:uriPattern "position/exon_end_@@exon.exon_id@@"
+	; d2rq:class faldo:StrandedPosition
+	.
+map:exon_endPositionPositiveStrand a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:exon_endPosition
+	; d2rq:property rdf:type
+	; d2rq:uriPattern "faldo:ForwardStrandPosition"
+	; d2rq:condition "exon.seq_region_strand = 1"
+	.
+map:exon_endPositionNegativeStrand a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:exon_endPosition
+	; d2rq:property rdf:type
+	; d2rq:uriPattern "faldo:ReverseStrandPosition"
+	; d2rq:condition "exon.seq_region_strand = -1"
+	.
+map:exon_endPositionPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:exon_endPosition
+	; d2rq:property faldo:position
+	; d2rq:datatype xsd:long
+	; d2rq:column "exon.seq_region_end";
+	.
+#map:exon_endPositionReference a d2rq:PropertyBridge
+#	; d2rq:belongsToClassMap map:exon_endPosition
+#	; d2rq:property faldo:reference
+#	; d2rq:refersToClassMap map:chromosome
+#	; d2rq:join "exon.seq_region_id => seq_region.seq_region_id"
+#	.
+map:exon_to_endPosition a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:exon
+	; d2rq:property faldo:end
+	; d2rq:uriPattern "position/exon_end_@@exon.exon_id@@"
+	.
+map:exon_transcripts a d2rq:PropertyBridge
+	; d2rq:belongsToClassMap map:exon
+	; d2rq:property vocab:from_transcript
+	; d2rq:propertyDefinitionLabel "member of transcript"
+	; d2rq:refersToClassMap map:transcript
+	; d2rq:join "transcript.transcript_id <= exon_transcript.transcript_id"
+	; d2rq:join "exon.exon_id <= exon_transcript.exon_id"
+	.
+
+# Table xref
+map:xref a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "xref/@@xref.xref_id@@";
+	d2rq:class vocab:xref;
+	d2rq:classDefinitionLabel "xref";
+	.
+map:xref__label a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:xref;
+	d2rq:property rdfs:label;
+	d2rq:pattern "@@xref.display_label@@";
+	.
+map:xref_external_db_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:xref;
+	d2rq:property vocab:has_external_db;
+	d2rq:refersToClassMap map:external_db;
+	d2rq:join "xref.external_db_id => external_db.external_db_id";
+	d2rq:propertyDefinitionLabel "xref external_db_id";
+#	d2rq:column "xref.external_db_id";
+#	d2rq:datatype xsd:integer;
+	.
+
