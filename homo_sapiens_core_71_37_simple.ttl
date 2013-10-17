@@ -163,6 +163,16 @@ map:gene_display_xref a d2rq:PropertyBridge;
 	d2rq:refersToClassMap map:xref;
 	d2rq:join "gene.display_xref_id => xref.xref_id";
 	.
+map:gene_hgnc_name a d2rq:PropertyBridge
+        ; d2rq:belongsToClassMap map:gene
+        ; d2rq:property vocab:hgnc_symbol
+        ; d2rq:column "xref.display_label"
+        ; d2rq:join "xref.xref_id <= object_xref.xref_id"
+        ; d2rq:join "object_xref.ensembl_id => gene.gene_id"
+        ; d2rq:condition "object_xref.ensembl_object_type = 'Gene'"
+        ; d2rq:condition "xref.external_db_id = 1100"
+        ; d2rq:datatype xsd:string
+        .
 map:gene_description a d2rq:PropertyBridge;
 	d2rq:belongsToClassMap map:gene;
 	d2rq:property rdfs:comment;
@@ -174,6 +184,7 @@ map:gene_xref a d2rq:PropertyBridge
 	; d2rq:refersToClassMap map:xref
 	; d2rq:property vocab:has_xref
 	; d2rq:join "object_xref.ensembl_id => gene.gene_id"
+	; d2rq:join "object_xref.xref_id => xref.xref_id"
 	; d2rq:condition "object_xref.ensembl_object_type = 'Gene'"
 	.
 map:gene_annotation a d2rq:PropertyBridge
@@ -329,6 +340,7 @@ map:transcript_xref a d2rq:PropertyBridge
 	; d2rq:refersToClassMap map:xref
 	; d2rq:property vocab:has_xref
 	; d2rq:join "object_xref.ensembl_id => transcript.transcript_id"
+	; d2rq:join "object_xref.xref_id => xref.xref_id"
 	; d2rq:condition "object_xref.ensembl_object_type = 'Transcript'"
 	.
 map:transcript_description a d2rq:PropertyBridge;
@@ -414,7 +426,7 @@ map:translation_startPositionReference a d2rq:PropertyBridge
 	; d2rq:join "translation.start_exon_id => exon.exon_id"
 	.
 map:translation_to_startPosition a d2rq:PropertyBridge
-	; d2rq:belongsToClassMap map:exon
+	; d2rq:belongsToClassMap map:translation
 	; d2rq:property faldo:begin
 	; d2rq:uriPattern "position/translation_start_@@translation.translation_id@@"
 	.
@@ -445,7 +457,7 @@ map:translation_endPositionReference a d2rq:PropertyBridge
 	; d2rq:join "translation.end_exon_id => exon.exon_id"
 	.
 map:translation_to_endPosition a d2rq:PropertyBridge
-	; d2rq:belongsToClassMap map:exon
+	; d2rq:belongsToClassMap map:translation
 	; d2rq:property faldo:end
 	; d2rq:uriPattern "position/translation_end_@@translation.translation_id@@"
 	.
@@ -468,6 +480,7 @@ map:translation_xref a d2rq:PropertyBridge
 	; d2rq:refersToClassMap map:xref
 	; d2rq:property vocab:has_xref
 	; d2rq:join "object_xref.ensembl_id => translation.translation_id"
+	; d2rq:join "object_xref.xref_id => xref.xref_id"
 	; d2rq:condition "object_xref.ensembl_object_type = 'Translation'"
 	.
 map:translation_annotation a d2rq:PropertyBridge
